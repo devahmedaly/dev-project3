@@ -100,7 +100,10 @@ jobs:
           name: Front-end test
           command: |
             cd frontend
-            npm run test
+            npm install 
+            # sudo npm i --save-dev standard-version
+            # sudo npm install oauth-sign
+            # sudo npm i semver
             npm run test
                 
   test-backend:
@@ -118,8 +121,11 @@ jobs:
           name: Back-end test
           command: |
             cd backend
+            npm install 
+            # sudo npm i --save-dev standard-version
+            # sudo npm i semver
             npm run test
-            npm run test
+            
 
   scan-frontend:
     docker:
