@@ -67,11 +67,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build-1
-      - persist_to_workspace: # one of save_cache and persist_to_workspace should be enough
-          root: .
-          paths:
-            - frontend/node_modules
-            - frontend/dist
 
   build-backend:
     docker:
@@ -89,11 +84,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/node_modules
-            - backend/dist
+
   test-frontend:
     docker:
       # Docker image here
