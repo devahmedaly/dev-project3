@@ -354,7 +354,6 @@ jobs:
      # - destroy-environment
 
   smoke-test:
-  run_smoke_test:
     docker:
       - image: python:3.7-alpine3.11
     environment: 
