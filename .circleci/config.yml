@@ -354,36 +354,50 @@ jobs:
      # - destroy-environment
 
   smoke-test:
+  run_smoke_test:
     docker:
-      - image: python:3.7-alpine3.11 
+      - image: python:3.7-alpine3.11
+    environment: 
+      ID: arns3
     steps:
       - checkout
+      - run: apk --no-cache add curl
       - run:
-          name: Install dependencies
+          name: set the API_URL to environment so that smoke test can be done to backend . 
           command: |
-            apk add --update curl
-            pip install awscli
+            chmod 777 set_backend_ip_env.sh
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:project,Values=udapeople" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+          
+            export API_URL=http://$BACKEND_IP:3030
+            echo $API_URL >> frontend/.env
+            echo $API_URL
+    
+     
       - run:
-          name: Get backend url and smoke test
-          no_output_timeout: 30m
+          name: Install awscli
           command: |
-            BACKEND_URL=$(aws ec2 describe-instances \
-            --filters Name=instance-state-name,Values=running \
-            --query 'Reservations[*].Instances[*].PublicDnsName' \
-            --output text)
-            echo "${BACKEND_URL}"
-            curl "http://${BACKEND_URL}:3030/api/status"
-              
+            pip3 install awscli 
       - run:
-          name: Frontend smoke test.
+          name: smoke test frontend 
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-2.amazonaws.com"
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3.ap-south-1.amazonaws.com/#/employees"            
             if curl -s ${URL} | grep "Welcome"
             then
-              return 0
-            else
               return 1
-            fi
+            else
+              return 0
+            fi       
+      - run:
+          name: smoke test for backend.
+          command: |
+            BACKEND_IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:project, Values=udapeople" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+            curl "http://${BACKEND_IP}:3030/api/status"
      # - revert-migrations
       #- destroy-environment
 
