@@ -363,10 +363,7 @@ jobs:
           command: |
             apk add --update tar gzip curl nodejs npm
             pip install awscli
-      - run:
-          name: get backend URL and back end smoke test
-          command: |
-          
+                     
       - run:
          name: Get backend url and backend smoke test
           command: |
