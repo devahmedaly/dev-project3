@@ -213,7 +213,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["8f:73:3d:76:19:14:8c:e2:ad:21:bf:5e:3b:14:35:84"]
+          fingerprints: ["5b:47:c8:53:0b:0b:fc:b0:4c:a7:91:b6:db:ba:00:01"]
       - attach_workspace: # to get access to all files needed e.g. inventory.txt
           at: ~/
       - run: 
