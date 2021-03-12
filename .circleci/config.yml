@@ -358,7 +358,6 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - install-tools-on-alpine
       - run:
           name: smoke test frontend
           command: |
