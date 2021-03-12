@@ -353,31 +353,37 @@ jobs:
       #- revert-migrations
      # - destroy-environment
 
-  smoke-test:
+    smoke-test:
     docker: 
       - image: python:3.7-alpine3.11
+    steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl nodejs npm
+            apk add --update tar gzip curl nodejs npm
             pip install awscli
       - run:
-          name: Get backend url & Backend smoke test.
-          command: |       
-            export BACKEND_URL=$(curl -H "token: 1e1e96f7-a791-42b5-b240-bd5407aa9c51" --request GET https://api.memstash.io/values/ipaddress)
-            echo "${BACKEND_IP}"
-            curl "http://${BACKEND_URL}:3030/api/status"
+          name: get backend URL and back end smoke test
+          command: |
+          
+      - run:
+         name: Get backend url and backend smoke test
+          command: |
+            BACKEND_IP=$(curl -H "token: 1e1e96f7-a791-42b5-b240-bd5407aa9c51" --request GET https://api.memstash.io/values/url_${CIRCLE_WORKFLOW_ID:0:7})
+            export URL="http://$BACKEND_IP:3030/api/status"
+            echo $URL
+            curl $URL
+            
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-ap-south-1.amazonaws.com"
-            echo "$URL"
-            if curl -s {$URL} | grep "Welcome"
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-us-east-2.amazonaws.com/index.html#/employees"
+            if curl -s ${URL} | grep "Welcome"
             then
-              return 1
-            else
               return 0
+            else
+              return 1
             fi
      # - revert-migrations
       #- destroy-environment
