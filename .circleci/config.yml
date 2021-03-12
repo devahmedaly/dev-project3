@@ -361,19 +361,17 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar gzip curl nodejs npm
+            apk add --update curl
             pip install awscli
       - run:
           name: get backend URL and back end smoke test
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
-                  --filters "Name=tag:Name, Values=Udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-                  --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                  --output text)
-            echo ${BACKEND_IP}
-            export URL="http://$BACKEND_IP:3030/api/status"
-            echo $URL
-            curl $URL
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+            echo "${BACKEND_IP}"
+            curl "http://${BACKEND_IP}:3030/api/status"
 #       - run:
 #         name: Get backend url and backend smoke test
 #          command: |
